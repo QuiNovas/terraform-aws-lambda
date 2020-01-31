@@ -155,3 +155,17 @@ resource "aws_iam_role_policy_attachment" "invoke_function" {
 data "aws_region" "current" {
 }
 
+resource "aws_lambda_function_event_invoke_config" "default" {
+  function_name = aws_lambda_function.function.arn
+ 
+  destination_config {
+
+    on_failure {
+      destination = var.dead_letter_arn
+    }
+
+    on_success {
+      destination = var.destination
+    }
+  }
+}

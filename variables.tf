@@ -77,3 +77,8 @@ variable "vpc_config" {
   type        = map(list(string))
   default     = {}
 }
+
+variable "destination" {
+  description = "The arn for the SNS topic or SQS or lambda function that will act as a destination on success"
+  type        = string
+}
