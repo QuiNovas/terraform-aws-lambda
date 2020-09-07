@@ -94,7 +94,7 @@ resource "aws_lambda_function" "function" {
   dead_letter_config {
     target_arn = var.dead_letter_arn
   }
-  depends_on = [aws_cloudwatch_log_group.log_group]
+  depends_on = [aws_cloudwatch_log_group.log_group,aws_efs_mount_target.alpha]
   environment {
     variables = var.environment_variables
   }
@@ -110,10 +110,26 @@ resource "aws_lambda_function" "function" {
       version,
     ]
   }
-  memory_size = var.memory_size
-  publish     = true
-  role        = aws_iam_role.function.arn
+  memory_size                     = var.memory_size
+  publish                        = true
+  role                           = aws_iam_role.function.arn
+  reserved_concurrent_executions = var.reserved_concurrent_executions
   runtime     = var.runtime
+
+  dynamic "file_system_config" {
+    for_each = var.file_system_config == null ? [] : [var.file_system_config]
+    content {
+      arn               = file_system_config.value.arn
+      local_mount_path  = file_system_config.value.local_mount_path
+    }
+  }
+
+  dynamic "tracing_config" {
+    for_each = var.tracing_config == null ? [] : [var.tracing_config]
+    content {
+      mode = tracing_config.value.mode
+    }
+  }
 
   dynamic "vpc_config" {
     for_each = length(var.vpc_config) < 1 ? [] : [var.vpc_config]
@@ -152,6 +168,14 @@ resource "aws_iam_role_policy_attachment" "invoke_function" {
   policy_arn = aws_iam_policy.invoke_function.arn
   role       = aws_iam_role.function.name
 }
+
+
+resource "aws_efs_mount_target" "alpha" {
+  count = var.file_system_config == null ? 0 : 1
+  file_system_id = var.aws_efs_file_system_id
+  subnet_id      = var.aws_subnet
+}
+
 
 data "aws_region" "current" {
 }

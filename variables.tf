@@ -45,6 +45,15 @@ variable "kms_key_arn" {
   type        = string
 }
 
+variable "file_system_config" {
+  description = "it contains  ARN of the Amazon EFS Access Point that provides access to the file system.and The path where the function can access the file system, starting with /mnt/."
+    type = object({
+    arn = string
+    local_mount_path = string
+  })
+  default = null
+}
+
 variable "layers" {
   default     = []
   description = "The list of lambda layers to be attached"
@@ -68,6 +77,11 @@ variable "policy_arns" {
   type        = list(string)
 }
 
+variable "reserved_concurrent_executions" {
+  default     = -1
+  description = "The amount of reserved concurrent executions for this lambda function."
+  type        = number
+}
 
 variable "log_retention_days" {
   default     = 7
@@ -97,8 +111,28 @@ variable "timeout" {
   type        = number
 }
 
+variable "tracing_config" {
+  description = "Can be either PassThrough or Active."
+  type = object({
+    mode = string
+  })
+  default = null
+}
+
 variable "vpc_config" {
   description = "Provide this to allow your function to access your VPC. Both 'subnet_ids' and 'security_group_ids' are a list of strings are required to enable vpc)."
   type        = map(list(string))
   default     = {}
+}
+
+variable "aws_efs_file_system_id" {
+  description = "The ID of the file system for which the mount target is intended."
+  type        = string
+  default     = ""
+}
+
+variable "aws_subnet" {
+  description = "The ID of the subnet to add the mount target in."
+  type        = string
+  default     = ""
 }
