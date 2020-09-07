@@ -4,6 +4,18 @@ variable "allow_self_invocation" {
   type        = bool
 }
 
+variable "aws_efs_file_system_id" {
+  description = "The ID of the file system for which the mount target is intended."
+  type        = string
+  default     = ""
+}
+
+variable "aws_subnet" {
+  description = "The ID of the subnet to add the mount target in."
+  type        = string
+  default     = ""
+}
+
 variable "description" {
   default     = ""
   description = "Description of what your Lambda Function does"
@@ -47,8 +59,8 @@ variable "kms_key_arn" {
 
 variable "file_system_config" {
   description = "it contains  ARN of the Amazon EFS Access Point that provides access to the file system.and The path where the function can access the file system, starting with /mnt/."
-    type = object({
-    arn = string
+  type = object({
+    arn              = string
     local_mount_path = string
   })
   default = null
@@ -123,16 +135,4 @@ variable "vpc_config" {
   description = "Provide this to allow your function to access your VPC. Both 'subnet_ids' and 'security_group_ids' are a list of strings are required to enable vpc)."
   type        = map(list(string))
   default     = {}
-}
-
-variable "aws_efs_file_system_id" {
-  description = "The ID of the file system for which the mount target is intended."
-  type        = string
-  default     = ""
-}
-
-variable "aws_subnet" {
-  description = "The ID of the subnet to add the mount target in."
-  type        = string
-  default     = ""
 }
