@@ -94,7 +94,7 @@ resource "aws_lambda_function" "function" {
   dead_letter_config {
     target_arn = var.dead_letter_arn
   }
-  depends_on = [aws_cloudwatch_log_group.log_group, aws_efs_mount_target.alpha]
+  depends_on = [aws_cloudwatch_log_group.log_group, aws_efs_mount_target.file_system]
   environment {
     variables = var.environment_variables
   }
@@ -170,7 +170,7 @@ resource "aws_iam_role_policy_attachment" "invoke_function" {
 }
 
 
-resource "aws_efs_mount_target" "alpha" {
+resource "aws_efs_mount_target" "file_system" {
   count          = var.file_system_config == null ? 0 : 1
   file_system_id = var.aws_efs_file_system_id
   subnet_id      = var.aws_subnet
