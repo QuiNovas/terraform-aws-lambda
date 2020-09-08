@@ -171,9 +171,11 @@ resource "aws_iam_role_policy_attachment" "invoke_function" {
 
 
 resource "aws_efs_mount_target" "file_system" {
-  count          = var.file_system_config == null ? 0 : 1
-  file_system_id = var.aws_efs_file_system_id
-  subnet_id      = var.aws_subnet
+  count           = var.file_system_config == null ? 0 : 1
+  file_system_id  = var.aws_efs_file_system_id
+  subnet_id       = var.aws_subnet
+  ip_address      = var.file_system_ip_address
+  security_groups = var.file_system_security_groups
 }
 
 

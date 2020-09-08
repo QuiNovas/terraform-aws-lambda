@@ -66,6 +66,18 @@ variable "file_system_config" {
   default = null
 }
 
+variable "file_system_ip_address" {
+  default     = ""
+  description = "The address (within the address range of the specified subnet) at which the file system may be mounted via the mount target."
+  type        = string
+}
+
+variable "file_system_security_groups" {
+  default     = []
+  description = " A list of up to 5 VPC security group IDs (that must be for the same VPC as subnet specified) in effect for the mount target."
+  type        = list(string)
+}
+
 variable "layers" {
   default     = []
   description = "The list of lambda layers to be attached"
