@@ -5,13 +5,13 @@ variable "allow_self_invocation" {
 }
 
 variable "aws_efs_file_system_id" {
-  description = "The ID of the file system for which the mount target is intended."
+  description = "required if using file_system_config.The ID of the file system for which the mount target is intended."
   type        = string
   default     = ""
 }
 
 variable "aws_subnet" {
-  description = "The ID of the subnet to add the mount target in."
+  description = "required if using file_system_config.The ID of the subnet to add the mount target in."
   type        = string
   default     = ""
 }
@@ -68,13 +68,13 @@ variable "file_system_config" {
 
 variable "file_system_ip_address" {
   default     = ""
-  description = "The address (within the address range of the specified subnet) at which the file system may be mounted via the mount target."
+  description = "(optional) The address (within the address range of the specified subnet) at which the file system may be mounted via the mount target."
   type        = string
 }
 
 variable "file_system_security_groups" {
   default     = []
-  description = " A list of up to 5 VPC security group IDs (that must be for the same VPC as subnet specified) in effect for the mount target."
+  description = "(optional) A list of up to 5 VPC security group IDs (that must be for the same VPC as subnet specified) in effect for the mount target."
   type        = list(string)
 }
 
