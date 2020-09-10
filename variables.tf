@@ -13,7 +13,15 @@ variable "aws_efs_file_system_id" {
 variable "aws_subnet" {
   description = "required if using file_system_config.The ID of the subnet to add the mount target in."
   type        = string
-  default     = ""
+
+  validation {
+    condition = (
+      var.aws_subnet == "" ||
+      substr(var.aws_subnet, 0, 7) == "subnet-"
+    )
+    error_message = "The aws_subnet value should either start with \"subnet-\" or \"\"."
+  }
+  default = ""
 }
 
 variable "description" {
