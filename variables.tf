@@ -4,6 +4,26 @@ variable "allow_self_invocation" {
   type        = bool
 }
 
+variable "aws_efs_file_system_id" {
+  description = "required if using file_system_config.The ID of the file system for which the mount target is intended."
+  type        = string
+  default     = ""
+}
+
+variable "aws_subnet" {
+  description = "required if using file_system_config.The ID of the subnet to add the mount target in."
+  type        = string
+
+  validation {
+    condition = (
+      var.aws_subnet == "" ||
+      substr(var.aws_subnet, 0, 7) == "subnet-"
+    )
+    error_message = "The aws_subnet value should either start with \"subnet-\" or \"\"."
+  }
+  default = ""
+}
+
 variable "description" {
   default     = ""
   description = "Description of what your Lambda Function does"
@@ -45,6 +65,27 @@ variable "kms_key_arn" {
   type        = string
 }
 
+variable "file_system_config" {
+  description = "it contains  ARN of the Amazon EFS Access Point that provides access to the file system.and The path where the function can access the file system, starting with /mnt/."
+  type = object({
+    arn              = string
+    local_mount_path = string
+  })
+  default = null
+}
+
+variable "file_system_ip_address" {
+  default     = ""
+  description = "(optional) The address (within the address range of the specified subnet) at which the file system may be mounted via the mount target."
+  type        = string
+}
+
+variable "file_system_security_groups" {
+  default     = []
+  description = "(optional) A list of up to 5 VPC security group IDs (that must be for the same VPC as subnet specified) in effect for the mount target."
+  type        = list(string)
+}
+
 variable "layers" {
   default     = []
   description = "The list of lambda layers to be attached"
@@ -68,6 +109,11 @@ variable "policy_arns" {
   type        = list(string)
 }
 
+variable "reserved_concurrent_executions" {
+  default     = -1
+  description = "The amount of reserved concurrent executions for this lambda function."
+  type        = number
+}
 
 variable "log_retention_days" {
   default     = 7
@@ -95,6 +141,14 @@ variable "timeout" {
   default     = 3
   description = "The timeout to apply to the function"
   type        = number
+}
+
+variable "tracing_config" {
+  description = "Can be either PassThrough or Active."
+  type = object({
+    mode = string
+  })
+  default = null
 }
 
 variable "vpc_config" {
