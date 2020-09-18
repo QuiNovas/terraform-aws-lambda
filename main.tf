@@ -15,12 +15,15 @@ data "aws_iam_policy_document" "assume_role" {
 resource "aws_iam_role" "function" {
   name               = var.name
   assume_role_policy = data.aws_iam_policy_document.assume_role.json
+  tags               = var.tags
 }
 
 resource "aws_cloudwatch_log_group" "log_group" {
   name              = "/aws/lambda/${var.name}"
   retention_in_days = var.log_retention_days
+  tags              = var.tags
 }
+
 
 data "aws_iam_policy_document" "function" {
   statement {
@@ -128,6 +131,7 @@ resource "aws_lambda_function" "function" {
   s3_key            = data.aws_s3_bucket_object.function_package.key
   s3_object_version = data.aws_s3_bucket_object.function_package.version_id
   timeout           = var.timeout
+  tags              = var.tags
 }
 
 data "aws_iam_policy_document" "invoke_function" {
