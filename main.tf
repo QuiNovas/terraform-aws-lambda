@@ -126,7 +126,6 @@ resource "aws_lambda_function" "function" {
     }
   }
 
-
   s3_bucket         = data.aws_s3_bucket_object.function_package.bucket
   s3_key            = data.aws_s3_bucket_object.function_package.key
   s3_object_version = data.aws_s3_bucket_object.function_package.version_id
