@@ -75,6 +75,17 @@ variable "log_retention_days" {
   type        = number
 }
 
+variable "provisioned_concurrency" {
+  default     = false
+  description = "If true, allows this Lambda function to create alias and manage provisioned_concurrency_config"
+  type        = bool
+}
+
+variable "provisioned_concurrent_executions" {
+  default     = 1
+  description = "Amount of capacity to allocate. Must be greater than or equal to 1"
+  type        = number
+}
 
 variable "runtime" {
   description = "The runtime the function should use"
@@ -100,7 +111,7 @@ variable "timeout" {
 variable "tags" {
   default     = {}
   description = "Key-value map of tags"
-  type        = map
+  type        = map(any)
 }
 
 variable "vpc_config" {
