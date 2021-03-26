@@ -158,3 +158,19 @@ resource "aws_iam_role_policy_attachment" "invoke_function" {
 
 data "aws_region" "current" {
 }
+
+
+resource "aws_lambda_alias" "function" {
+  count            = var.provisioned_concurrency ? 1 : 0
+  name             = aws_lambda_function.function.function_name
+  description      = var.description
+  function_name    = aws_lambda_function.function.arn
+  function_version = aws_lambda_function.function.version
+}
+
+resource "aws_lambda_provisioned_concurrency_config" "function" {
+  count                             = var.provisioned_concurrency ? 1 : 0
+  function_name                     = aws_lambda_function.function.function_name
+  provisioned_concurrent_executions = var.provisioned_concurrency == true && var.provisioned_concurrent_executions == 1 ? 1 : var.provisioned_concurrent_executions
+  qualifier                         = aws_lambda_alias.function[count.index].name
+}
