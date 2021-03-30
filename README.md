@@ -45,9 +45,7 @@ provider "aws" {
 | dead\_letter\_arn | The arn for the SNS topic that handles dead letters | string |  | yes |
 | destinations\_on\_failure\_arn | Add destination to function. An ARN of SQS queue, SNS topic, Lambda function, or EventBridge event bus. Added as on_failure aysynchronous invocation | string | "" | no |
 | destinations\_on\_success\_arn | Add destination to function. An ARN of SQS queue, SNS topic, Lambda function, or EventBridge event bus. Added as on_success aysynchronous invocation | string | "" | no |
-| environment\_variables | The map of environment variables to give to the Lambda function | map(string) | {
-    DEFAULT = "default"
-  }| no |
+| environment\_variables | The map of environment variables to give to the Lambda function | map(string) | {} | no |
 | handler | DesThe handler for the lambda function | string |  | yes |
 | kms\_key\_arn | The arn of the KMS key used to encrypt the environment variables | string |  | yes |
 | layers | The list of lambda layers to be attached | list(string) | [] | no |
