@@ -36,6 +36,128 @@ provider "aws" {
 }
 ```
 
+### usage :- triggering aws lambda function from aws api gateway and self invocation
+```hcl
+resource "aws_api_gateway_rest_api" "test" {
+  name = "test"
+}
+
+resource "aws_s3_bucket" "test" {
+  bucket = "test-bucket"
+  acl    = "private"
+
+  tags = {
+    Name        = "test"
+    Environment = "Dev"
+  }
+}
+
+resource "aws_kms_key" "test" {
+  description         = "Key for test"
+  enable_key_rotation = true
+}
+
+
+resource "aws_kinesis_stream" "test" {
+  encryption_type  = "KMS"
+  kms_key_id       = aws_kms_key.test.key_id
+  name             = "test"
+  retention_period = 168
+  shard_count      = 4
+}
+
+data "aws_iam_policy_document" "apigateway_assume_role" {
+  statement {
+    actions = [
+      "sts:AssumeRole",
+    ]
+
+    principals {
+      identifiers = [
+        "apigateway.amazonaws.com",
+      ]
+
+      type = "Service"
+    }
+  }
+}
+
+data "aws_iam_policy_document" "test" {
+  statement {
+    actions = [
+      "s3:PutObject*",
+    ]
+
+    resources = [
+      "${aws_s3_bucket.test.arn}/*",
+    ]
+
+    sid = "AllowPutinBucket"
+  }
+
+  statement {
+    actions = [
+      "firehose:PutRecord*",
+    ]
+
+    resources = [
+      aws_kinesis_stream.test.arn,
+    ]
+
+    sid = "AllowPutRecords"
+  }
+
+resource "aws_iam_policy" "test" {
+  name   = "test"
+  policy = data.aws_iam_policy_document.test.json
+}
+
+module "test" {
+  dead_letter_arn = "arn:aws:sns:us-east-1:123456789012:test"
+
+  environment_variables = {
+    ENVIRONMENT            = "dev"
+    LOG_LEVEL              = "INFO"
+  }
+
+  handler     = "function.handler"
+  kms_key_arn = "arn:aws:kms:us-east-1:123456789012:key/c3298b1d-e9cb-4c89-9e41-11fe7fd4576"
+  memory_size = 256
+  name        = "test"
+
+  policy_arns = [
+    aws_iam_policy.test.arn,
+  ]
+
+
+  runtime            = "python3.7"
+  s3_bucket          = "test-bucket"
+  s3_object_key      = "test.zip"
+  source             = "QuiNovas/lambda/aws"
+  timeout            = 300
+  version            = "3.0.12"
+  log_retention_days = 7
+}
+
+resource "aws_lambda_permission" "test" {
+  action        = "lambda:InvokeFunction"
+  function_name = module.test.name
+  principal     = "apigateway.amazonaws.com"
+  statement_id  = "AllowExecutionFromTESTAPIGateway"
+  source_arn    = aws_api_gateway_rest_api.test.execution_arn
+}
+
+resource "aws_iam_role" "test_invocation" {
+  assume_role_policy = data.aws_iam_policy_document.apigateway_assume_role.json
+  name               = "test-invocation"
+}
+
+resource "aws_iam_role_policy_attachment" "test_invocation" {
+  policy_arn = module.test.invoke_policy_arn
+  role       = aws_iam_role.test_invocation.name
+}
+```
+
 ## Inputs
 
 | Name | Description | Type | Default | Required |
