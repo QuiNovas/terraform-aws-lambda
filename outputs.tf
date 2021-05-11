@@ -32,3 +32,8 @@ output "log_group_name" {
   description = "the Cloudwatch Log group name"
   value       = aws_cloudwatch_log_group.log_group.name
 }
+
+output "version" {
+  description = "The version of the Lambda function"
+  value       = aws_lambda_function.function.version
+}
