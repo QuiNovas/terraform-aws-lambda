@@ -119,7 +119,7 @@ resource "aws_lambda_function" "function" {
   runtime     = var.runtime
 
   dynamic "vpc_config" {
-    for_each = length(var.vpc_config) < 1 ? [] : [var.vpc_config]
+    for_each = length(var.vpc_config) > 1  && var.vpc_enabled ? [var.vpc_config] : []
     content {
       security_group_ids = vpc_config.value.security_group_ids
       subnet_ids         = vpc_config.value.subnet_ids

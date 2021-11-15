@@ -119,3 +119,9 @@ variable "vpc_config" {
   type        = map(list(string))
   default     = {}
 }
+
+variable "vpc_enabled" {
+  default     = true
+  description = "Lambda is put in VPC if this bool is true and vpc_config is passed in"
+  type        = bool
+}
