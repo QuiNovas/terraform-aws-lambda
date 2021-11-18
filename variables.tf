@@ -32,7 +32,7 @@ variable "environment_variables" {
     DEFAULT = "default"
   }
   description = "The map of environment variables to give to the Lambda function"
-  type        = map(string)
+  type        = map(any)
 }
 
 variable "handler" {
