@@ -4,6 +4,12 @@ variable "allow_self_invocation" {
   type        = bool
 }
 
+variable "architectures" {
+  default     = ["x86_64"]
+  description = "Instruction set architecture for your Lambda function. Valid values are [x86_64] and [arm64]. Default is [x86_64]"
+  type        = list(string)
+}
+
 variable "description" {
   default     = ""
   description = "Description of what your Lambda Function does"
