@@ -87,7 +87,7 @@ resource "aws_iam_role_policy_attachment" "vpc_access" {
   role       = aws_iam_role.function.name
 }
 
-data "aws_s3_bucket_object" "function_package" {
+data "aws_s3_object" "function_package" {
   bucket = var.s3_bucket
   key    = var.s3_object_key
 }
@@ -127,9 +127,9 @@ resource "aws_lambda_function" "function" {
     }
   }
 
-  s3_bucket         = data.aws_s3_bucket_object.function_package.bucket
-  s3_key            = data.aws_s3_bucket_object.function_package.key
-  s3_object_version = data.aws_s3_bucket_object.function_package.version_id
+  s3_bucket         = data.aws_s3_object.function_package.bucket
+  s3_key            = data.aws_s3_object.function_package.key
+  s3_object_version = data.aws_s3_object.function_package.version_id
   timeout           = var.timeout
   tags              = var.tags
 }
