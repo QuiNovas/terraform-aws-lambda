@@ -98,7 +98,9 @@ resource "aws_lambda_function" "function" {
   dead_letter_config {
     target_arn = var.dead_letter_arn
   }
-  depends_on = [aws_cloudwatch_log_group.log_group]
+  depends_on = [
+    aws_cloudwatch_log_group.log_group,
+  ]
   environment {
     variables = var.environment_variables
   }
@@ -110,7 +112,6 @@ resource "aws_lambda_function" "function" {
     ignore_changes = [
       last_modified,
       qualified_arn,
-      s3_object_version,
       version,
     ]
   }
@@ -127,11 +128,10 @@ resource "aws_lambda_function" "function" {
     }
   }
 
-  s3_bucket         = data.aws_s3_object.function_package.bucket
-  s3_key            = data.aws_s3_object.function_package.key
-  s3_object_version = data.aws_s3_object.function_package.version_id
-  timeout           = var.timeout
-  tags              = var.tags
+  s3_bucket = data.aws_s3_object.function_package.bucket
+  s3_key    = data.aws_s3_object.function_package.key
+  timeout   = var.timeout
+  tags      = var.tags
 }
 
 data "aws_iam_policy_document" "invoke_function" {
