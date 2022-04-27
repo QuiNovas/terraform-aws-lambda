@@ -10,14 +10,14 @@ variable "architectures" {
   type        = list(string)
 }
 
-variable "description" {
-  default     = ""
-  description = "Description of what your Lambda Function does"
+variable "dead_letter_arn" {
+  description = "The arn for the SNS topic that handles dead letters"
   type        = string
 }
 
-variable "dead_letter_arn" {
-  description = "The arn for the SNS topic that handles dead letters"
+variable "description" {
+  default     = ""
+  description = "Description of what your Lambda Function does"
   type        = string
 }
 
@@ -57,6 +57,12 @@ variable "layers" {
   type        = list(string)
 }
 
+variable "log_retention_days" {
+  default     = 7
+  description = "The number of days you want to retain log events in the specified log group"
+  type        = number
+}
+
 variable "memory_size" {
   default     = 128
   description = "The memory allocation for the function"
@@ -74,12 +80,6 @@ variable "policy_arns" {
   type        = list(string)
 }
 
-
-variable "log_retention_days" {
-  default     = 7
-  description = "The number of days you want to retain log events in the specified log group"
-  type        = number
-}
 
 variable "provisioned_concurrency" {
   default     = false
@@ -108,16 +108,16 @@ variable "s3_object_key" {
   type        = string
 }
 
-variable "timeout" {
-  default     = 3
-  description = "The timeout to apply to the function"
-  type        = number
-}
-
 variable "tags" {
   default     = {}
   description = "Key-value map of tags"
   type        = map(any)
+}
+
+variable "timeout" {
+  default     = 3
+  description = "The timeout to apply to the function"
+  type        = number
 }
 
 variable "vpc_config" {
