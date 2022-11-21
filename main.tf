@@ -108,17 +108,10 @@ resource "aws_lambda_function" "function" {
   handler       = var.handler
   kms_key_arn   = var.kms_key_arn
   layers        = var.layers
-  lifecycle {
-    ignore_changes = [
-      last_modified,
-      qualified_arn,
-      version,
-    ]
-  }
-  memory_size = var.memory_size
-  publish     = true
-  role        = aws_iam_role.function.arn
-  runtime     = var.runtime
+  memory_size   = var.memory_size
+  publish       = true
+  role          = aws_iam_role.function.arn
+  runtime       = var.runtime
 
   dynamic "vpc_config" {
     for_each = length(var.vpc_config) > 1 && var.vpc_enabled ? [var.vpc_config] : []
